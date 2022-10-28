@@ -1,25 +1,47 @@
-import logo from './logo.svg';
+
 import './App.css';
+// import NavbarComponent from './NavbarComponent'
+// import ResciperComponent from './ResciperComponent'
+import NavFood from './btfoodmoi/NavFood';
+import { Fragment, useEffect, useState } from 'react';
+// import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
+
+import FoodComponent from './btfoodmoi/FoodComponent';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+   const [listData,setListData]=useState([])
+   const [isLoading,setIsLoading]=useState(false)
+   
+   useEffect(() => {
+    setIsLoading(true);
+      axios.post('https://api-qa.muangay-vn.com/api/consumers/menu/data',
+      {
+      "menuGUID": "7359bfe8-dbf1-4f4d-8b70-0a10566e51ea",
+      "isPreview": false,
+      "tableId": null
+  }).then((res) => {
+        // console.log(res)
 
-export default App;
+        setListData(res?.data?.data)
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.log("error", error)
+        setIsLoading(false);
+      });
+  }, []);
+  return (
+
+    <>
+    {isLoading?(<p>loading</p>):(
+    <Fragment>
+      <NavFood listData={listData?.sections}/>
+      <FoodComponent  listData={listData?.sections}/>
+   </Fragment>)}
+   
+   </>   
+  )};
+  export default App;
+
